@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Finanças</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        .navbar-brand span {
+            color: red;
+        }
+        .form-section button {
+            background-color: #e32938;
+            color: white;
+        }
+        .form-section button:hover {
+            background-color: #cc252e;
+        }
+        tbody tr td:nth-child(3).positivo {
+            color: #28a745; /* Verde para valores positivos */
+        }
+        tbody tr td:nth-child(3).negativo {
+            color: #dc3545; /* Vermelho para valores negativos */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">
+                    <h1><span>iFood</span>Finance</h1>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="#">Histórico</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Despesas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="receitas.html">Receitas</a></li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Buscar">
+                        <img src="perfil.png" alt="Perfil" class="rounded-circle" width="30" height="30">
+                    </form>
+                </div>
+            </nav>
+        </header>
+
+        <section class="form-section my-4">
+            <h2>Adicionar Receita</h2>
+            <form id="registroForm" class="row">
+                <div class="form-group col-md-6">
+                    <label for="id">ID</label>
+                    <input type="number" id="id" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="categoria">Categoria do Registro</label>
+                    <input type="text" id="categoria" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="valor">Valor do Registro</label>
+                    <input type="number" id="valor" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="data">Data do Registro</label>
+                    <input type="date" id="data" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="fornecedor">Fornecedor (Opcional)</label>
+                    <input type="text" id="fornecedor" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="descricao">Descrição (Opcional)</label>
+                    <input type="text" id="descricao" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="quantidade">Quantidade (Opcional)</label>
+                    <input type="number" id="quantidade" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="itens">Itens (Opcional)</label>
+                    <input type="number" id="itens" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Adicionar</button>
+            </form>
+        </section>
+
+        <section class="historico-section">
+            <h2>Histórico</h2>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>ID</th>
+                        <th>Valor</th>
+                        <th>Data</th>
+                        <th>Fornecedor</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Itens</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="historicoTable">
+                    <!-- Os registros serão adicionados aqui -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script>
+        // Array para armazenar as receitas
+        let receitas = [];
+    
+        // Função para adicionar receita ao array e à tabela
+        function adicionarReceita(event) {
+            event.preventDefault(); // Evita o recarregamento da página ao enviar o formulário
+            
+            // Capturar os valores do formulário
+            const id = document.getElementById('id').value;
+            const categoria = document.getElementById('categoria').value;
+            const valor = document.getElementById('valor').value;
+            const data = document.getElementById('data').value;
+            const fornecedor = document.getElementById('fornecedor').value;
+            const descricao = document.getElementById('descricao').value;
+            const quantidade = document.getElementById('quantidade').value;
+            const itens = document.getElementById('itens').value;
+    
+            // Criar um objeto receita
+            const receita = {
+                id,
+                categoria,
+                valor,
+                data,
+                fornecedor,
+                descricao,
+                quantidade,
+                itens
+            };
+    
+            // Adicionar a receita ao array
+            receitas.push(receita);
+    
+            // Atualizar a tabela
+            atualizarTabela();
+    
+            // Limpar o formulário
+            document.getElementById('registroForm').reset();
+        }
+    
+        // Função para remover uma receita
+        function removerReceita(index) {
+            // Remover a receita do array
+            receitas.splice(index, 1);
+    
+            // Atualizar a tabela
+            atualizarTabela();
+        }
+    
+        // Função para atualizar a tabela de receitas
+        function atualizarTabela() {
+            const historicoTable = document.getElementById('historicoTable');
+            historicoTable.innerHTML = ''; // Limpar a tabela antes de adicionar os novos dados
+    
+            // Inserir cada receita na tabela
+            receitas.forEach((receita, index) => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${receita.categoria}</td>
+                    <td>${receita.id}</td>
+                    <td class="${parseFloat(receita.valor) >= 0 ? 'positivo' : 'negativo'}">R$ ${parseFloat(receita.valor).toFixed(2)}</td>
+                    <td>${receita.data}</td>
+                    <td>${receita.fornecedor || '-'}</td>
+                    <td>${receita.descricao || '-'}</td>
+                    <td>${receita.quantidade || '-'}</td>
+                    <td>${receita.itens || '-'}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="removerReceita(${index})">Excluir</button></td>
+                `;
+    
+                historicoTable.appendChild(row);
+            });
+        }
+    
+        // Capturar o evento de submissão do formulário
+        document.getElementById('registroForm').addEventListener('submit', adicionarReceita);
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
